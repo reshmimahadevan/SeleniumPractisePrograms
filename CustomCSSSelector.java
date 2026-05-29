@@ -138,6 +138,7 @@ public class CustomCSSSelector {
 		// input.form-control:not(input[name='search'], input#input-firstname) -- exclude 2 elements
 
 		// space in xpath: - not trimming its ignoring the space
+		// Applicable for text only normalize-space
 		// option[normalize-space()='Angola']
 
 		// xpath vs css:

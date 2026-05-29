@@ -7,6 +7,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.Select;
 
 public class ElementUtils {
 
@@ -97,7 +98,8 @@ public class ElementUtils {
 		for (WebElement e : eleList) {
 			String text = e.getText();
 			System.out.println(text);
-			//Using contains instead of equals because what if any text later is appended with anything in future
+			// Using contains instead of equals because what if any text later is appended
+			// with anything in future
 			if (text.contains(value)) {
 				e.click();
 				break;
@@ -131,6 +133,96 @@ public class ElementUtils {
 	public List<WebElement> getElements(By locator) {
 
 		return driver.findElements(locator);
+	}
+
+	// ***** Drop Down Utils - Select Based Dropdowns ***** //
+	public boolean doSelectDropDownByIndex(By locator, int index) {
+		Select select = new Select(getElement(locator));
+		try {
+			select.selectByIndex(index);
+			return true;
+		} catch (NoSuchElementException e) {
+			System.out.println(index + " is not present in the dropdown");
+			return false;
+		}
+	}
+
+	public boolean doSelectDropDownByVisibleText(By locator, String visibleText) {
+		Select select = new Select(getElement(locator));
+		try {
+			select.selectByVisibleText(visibleText);
+			return true;
+		} catch (NoSuchElementException e) {
+			System.out.println(visibleText + " is not present in the dropdown");
+			return false;
+		}
+	}
+
+	public boolean doSelectDropDownByValue(By locator, String value) {
+		Select select = new Select(getElement(locator));
+		try {
+			select.selectByValue(value);
+			return true;
+		} catch (NoSuchElementException e) {
+			System.out.println(value + " is not present in the dropdown");
+			return false;
+		}
+	}
+
+	public boolean selectDropDownValue(By locator, String value) {
+
+		WebElement countryEle = getElement(locator);
+
+		Select select = new Select(countryEle);
+
+		List<WebElement> optionsList = select.getOptions();
+
+		boolean flag = false;
+
+		for (WebElement e : optionsList) {
+			String text = e.getText();
+			System.out.println(text);
+			if (text.equals(value)) {
+				e.click();
+				flag = true;
+				break;
+			}
+		}
+
+		if (flag) {
+			System.out.println(value + " is selected");
+			return true;
+		}
+
+		else {
+			System.out.println(value + " is not selected");
+			return false;
+		}
+	}
+
+	public boolean getDropDownValueList(By locator,List<String> expOptionsList) {
+		Select select = new Select(getElement(locator));
+
+		List<WebElement> optionsList = select.getOptions();
+		System.out.println(optionsList.size());
+
+		List<String> optionsValList = new ArrayList<String>();// pc=0, []
+
+		for (WebElement e : optionsList) {
+			String text = e.getText();
+			System.out.println(text);
+			optionsValList.add(text.trim());
+		}
+
+		if(optionsValList.containsAll(expOptionsList))
+		{
+			return true;
+		}
+		
+		else
+		{
+			return false;
+		}
 	}
 
 }

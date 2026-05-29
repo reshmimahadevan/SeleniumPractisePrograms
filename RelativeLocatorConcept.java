@@ -24,7 +24,7 @@ public class RelativeLocatorConcept {
 		Thread.sleep(8000);
 
 		WebElement ele = driver
-				.findElement(By.xpath("//section[contains(@class,'polluted-cities-list')]//p[text()='Hinton']"));
+				.findElement(By.xpath("//section[contains(@class,'polluted-cities-list')]//p[text()='Saint John']"));
 
 		String leftRank = driver.findElement(with(By.tagName("p")).toLeftOf(ele)).getText();
 		System.out.println(leftRank);
@@ -42,7 +42,7 @@ public class RelativeLocatorConcept {
 		System.out.println(belowCity);
 
 		//near uses CLOSE_IN_PIXELS - see its declaration
-		String nearEleText = driver.findElement(with(By.tagName("div")).near(ele)).getText();
+		String nearEleText = driver.findElement(with(By.tagName("p")).near(ele)).getText();
 		System.out.println(nearEleText);
 
 	}
