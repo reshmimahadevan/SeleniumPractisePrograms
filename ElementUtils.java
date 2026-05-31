@@ -23,15 +23,20 @@ public class ElementUtils {
 		}
 	}
 
-	// public void doSendKeys(By locator, String value) {
-	// nullCheck(value);
-	// getElement(locator).sendKeys(value);
-	// }
+//	public void doSendKeys(By locator, String value) {
+//		nullCheck(value);
+//		getElement(locator).sendKeys(value);
+//	}
 
 	// Send Keys is CharacterSequence "Array" -> ... -> sending multiple values so
-	// what if user sends
-	// StringBuilder/Buffer/String as value so overloaded the above method
+	// what if user sends StringBuilder/Buffer/String as value so overloaded the above method
 	// Refer SendKeysConcept
+
+	public void doSendKeys(String locatorType, String locatorValue, String value) {
+
+		nullCheck(value);
+		getElement(locatorType, locatorValue).sendKeys(value);
+	}
 
 	public void doSendKeys(By locator, CharSequence... value) {
 
@@ -41,6 +46,10 @@ public class ElementUtils {
 
 	public void doClick(By locator) {
 		getElement(locator).click();
+	}
+
+	public void doClick(String locatorType, String locatorValue) {
+		getElement(locatorType, locatorValue).click();
 	}
 
 	public String getText(By locator) {
@@ -73,6 +82,50 @@ public class ElementUtils {
 
 	public WebElement getElement(By locator) {
 		return driver.findElement(locator);
+	}
+
+	//If Locators ar enot in By but in String
+	public WebElement getElement(String locatorType, String locatorValue) {
+		return driver.findElement(getBy(locatorType, locatorValue));
+	}
+
+	public By getBy(String locatorType, String locatorValue) {
+
+		By locator = null;
+
+		switch (locatorType.toUpperCase()) {
+		case "ID":
+			locator = By.id(locatorValue);
+			break;
+		case "NAME":
+			locator = By.name(locatorValue);
+			break;
+		case "CLASS":
+			locator = By.className(locatorValue);
+			break;
+		case "XPATH":
+			locator = By.xpath(locatorValue);
+			break;
+		case "CSS":
+			locator = By.cssSelector(locatorValue);
+			break;
+		case "LINKTEXT":
+			locator = By.linkText(locatorValue);
+			break;
+		case "PARTIALLINKTEXT":
+			locator = By.partialLinkText(locatorValue);
+			break;
+		case "TAGNAME":
+			locator = By.tagName(locatorValue);
+			break;
+
+		default:
+			System.out.println("plz pass the right locator type: " + locatorType);
+			break;
+		}
+
+		return locator;
+
 	}
 
 	// *****Find Elements*****//
@@ -200,7 +253,7 @@ public class ElementUtils {
 		}
 	}
 
-	public boolean getDropDownValueList(By locator,List<String> expOptionsList) {
+	public boolean getDropDownValueList(By locator, List<String> expOptionsList) {
 		Select select = new Select(getElement(locator));
 
 		List<WebElement> optionsList = select.getOptions();
@@ -214,15 +267,42 @@ public class ElementUtils {
 			optionsValList.add(text.trim());
 		}
 
-		if(optionsValList.containsAll(expOptionsList))
-		{
+		if (optionsValList.containsAll(expOptionsList)) {
 			return true;
 		}
-		
-		else
-		{
+
+		else {
 			return false;
 		}
 	}
 
+	// ***** Dropdown Utils - Non Select Based *****//
+	public void selectChoice(By choice, By choicesList, String... choiceValue) throws InterruptedException {
+
+		doClick(choice);
+		Thread.sleep(2000);
+		List<WebElement> choices = getElements(choicesList);
+		System.out.println(choices.size());
+
+		if (choiceValue[0].equalsIgnoreCase("all")) {
+			// logic to select all the choices:
+			for (WebElement e : choices) {
+				e.click();
+			}
+		} else {
+
+			for (WebElement e : choices) {
+				String text = e.getText();
+				System.out.println(text);
+
+				for (String value : choiceValue) {
+					if (text.trim().equals(value)) {
+						e.click();
+						break;
+					}
+				}
+
+			}
+		}
+	}
 }
