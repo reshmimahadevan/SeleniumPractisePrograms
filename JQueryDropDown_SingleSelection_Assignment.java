@@ -28,9 +28,13 @@ public class JQueryDropDown_SingleSelection_Assignment {
 		//boolean result = selectChoice(choice, choicesList, "choice 3");
 		//System.out.println("Selection successful: " + result);
 		
-		// tc_2: Wrong choice
-		boolean result = selectChoice(choice, choicesList, "choice 99");
+		// tc_1: Correct choice - SubChoice
+		boolean result = selectChoice(choice, choicesList, "choice 6 1");
 		System.out.println("Selection successful: " + result);
+		
+		// tc_2: Wrong choice
+		//boolean result = selectChoice(choice, choicesList, "choice 99");
+		//System.out.println("Selection successful: " + result);
 
 	}
 
