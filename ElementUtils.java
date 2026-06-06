@@ -7,14 +7,17 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
 
 public class ElementUtils {
 
 	private WebDriver driver;
+	private Actions act;
 
 	public ElementUtils(WebDriver driver) {
 		this.driver = driver;
+		act = new Actions(driver);
 	}
 
 	private void nullCheck(CharSequence... value) {
@@ -23,10 +26,10 @@ public class ElementUtils {
 		}
 	}
 
-//	public void doSendKeys(By locator, String value) {
-//		nullCheck(value);
-//		getElement(locator).sendKeys(value);
-//	}
+	public void doSendKeys(By locator, String value) {
+		nullCheck(value);
+		getElement(locator).sendKeys(value);
+	}
 
 	// Send Keys is CharacterSequence "Array" -> ... -> sending multiple values so
 	// what if user sends StringBuilder/Buffer/String as value so overloaded the above method
@@ -84,7 +87,7 @@ public class ElementUtils {
 		return driver.findElement(locator);
 	}
 
-	//If Locators ar enot in By but in String
+	// If Locators ar enot in By but in String
 	public WebElement getElement(String locatorType, String locatorValue) {
 		return driver.findElement(getBy(locatorType, locatorValue));
 	}
@@ -128,7 +131,7 @@ public class ElementUtils {
 
 	}
 
-	// *****Find Elements*****//
+	// *****Find Elements *****//
 	public List<String> getElementTextList(By locator) {
 
 		List<WebElement> elements = getElements(locator);
@@ -304,5 +307,57 @@ public class ElementUtils {
 
 			}
 		}
+	}
+
+	// ***** Action Utils ***** //
+	public void doMoveToElement(By locator) throws InterruptedException {
+		Actions actions = new Actions(driver);
+
+		actions.moveToElement(getElement(locator)).build().perform();
+
+		Thread.sleep(2000);
+	}
+
+	public void handleParentSubMenu(By parentMenu, By subMenu) throws InterruptedException {
+
+		doMoveToElement(parentMenu);
+
+		doClick(subMenu);
+
+	}
+
+	public void handle4LevelMenuHandle(By level1Menu, By level2Menu, By level3Menu, By level4Menu)
+			throws InterruptedException {
+
+		doClick(level1Menu);
+		Thread.sleep(2000);
+		doMoveToElement(level2Menu);
+		Thread.sleep(2000);
+		doMoveToElement(level3Menu);
+		Thread.sleep(2000);
+		doClick(level4Menu);
+	}
+	
+	//For doSendKeysWithPause()/doActionsSendKeys()/doActionsClick()
+	//      -> Actions action = new Actions(driver)-> Created in Constructor above
+	
+	public void doSendKeysWithPause(By locator, String value, long pauseTime) {
+		
+		char val[] = value.toCharArray();
+		for (char ch : val) {// n->"n"
+			act
+			.sendKeys(getElement(locator), String.valueOf(ch))
+			  .pause(pauseTime)
+			    .perform();
+		}
+	}
+
+
+	public void doActionsSendKeys(By locator, String value) {
+		act.sendKeys(getElement(locator), value).perform();
+	}
+
+	public void doActionsClick(By locator) {
+		act.click(getElement(locator)).perform();
 	}
 }

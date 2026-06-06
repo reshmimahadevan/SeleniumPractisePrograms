@@ -31,7 +31,10 @@ public class SendKeysConcept {
 		ElementUtils eu = new ElementUtils(driver);
 
 		// You cannot send null it will give IllegalArgument Exception
-		eu.doSendKeys(By.name("lastname"), null);
+		
+		//eu.doSendKeys(By.name("lastname"), (String) null);
+		
+		eu.doSendKeys(By.name("lastname"), (CharSequence) null);
 
 	}
 
