@@ -19,6 +19,7 @@ public class WaitForAlert {
 		driver.findElement(By.xpath("//button[text()='Click for JS Alert']")).click();
 
 //		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+//		"until()" will change its return type automatically so no need to switchTo().alert() here 
 //		Alert alert = wait.until(ExpectedConditions.alertIsPresent());
 //		System.out.println(alert.getText());
 //		alert.accept();
@@ -36,10 +37,10 @@ public class WaitForAlert {
 
 	public static void dismissAlert(int timeOut) {
 		waitForAlert(timeOut).dismiss();
-	}
+	}	
 
-	public static void getTextAlert(int timeOut) {
-		waitForAlert(timeOut).getText();
+	public static String getTextAlert(int timeOut) {
+		return waitForAlert(timeOut).getText();
 	}
 
 	public static void sendKeysAlert(int timeOut, String value) {

@@ -4,8 +4,10 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -402,6 +404,118 @@ public class ElementUtils {
 
 	public void sendKeysWithWait(By locator, int timeOut, CharSequence... value) {
 		waitForElementVisible(locator, timeOut).sendKeys(value);
+
+	}
+
+	/***** Wait for Alerts(JS Pop) *****/
+	public Alert waitForAlert(int timeOut) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeOut));
+		return wait.until(ExpectedConditions.alertIsPresent());
+	}
+
+	public void acceptAlert(int timeOut) {
+		waitForAlert(timeOut).accept();
+	}
+
+	public void dismissAlert(int timeOut) {
+		waitForAlert(timeOut).dismiss();
+	}
+
+	public String getTextAlert(int timeOut) {
+		return waitForAlert(timeOut).getText();
+	}
+
+	public void sendKeysAlert(int timeOut, String value) {
+		waitForAlert(timeOut).sendKeys(value);
+	}
+
+	/***** Wait For Title *****/
+	public String waitFotTitleContains(String fractionTitle, int timeOut) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeOut));
+
+		// If you write it in ifelse condition then it will not return null in case of
+		// else
+		// It will return timeout exception similiar to isDisplayed()
+		// So handle it using try catch so it returns null
+
+		try {
+			wait.until(ExpectedConditions.titleContains(fractionTitle));
+			return driver.getTitle();
+
+		} catch (TimeoutException e) {
+			return null;
+		}
+
+	}
+
+	public String waitFotTitleIs(String title, int timeOut) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeOut));
+		try {
+			wait.until(ExpectedConditions.titleIs(title));
+			return driver.getTitle();
+
+		} catch (TimeoutException e) {
+			return null;
+		}
+
+	}
+
+	/***** Wait For URL *****/
+	public String waitForURLContains(String fractionURL, int timeOut) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeOut));
+		try {
+			wait.until(ExpectedConditions.urlContains(fractionURL));
+			return driver.getCurrentUrl();
+
+		} catch (TimeoutException e) {
+			return null;
+		}
+
+	}
+
+	public String waitForURLIs(String url, int timeOut) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeOut));
+		try {
+			wait.until(ExpectedConditions.urlToBe(url));
+			return driver.getCurrentUrl();
+
+		} catch (TimeoutException e) {
+			return null;
+		}
+
+	}
+
+	/***** Wait For Frame *****/
+	public void waitForFrameAndSwitchToIt(By frameLocator, int timeOut) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeOut));
+		wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(frameLocator));
+	}
+
+	public void waitForFrameAndSwitchToIt(String frameNameOrID, int timeOut) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeOut));
+		wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(frameNameOrID));
+	}
+
+	public void waitForFrameAndSwitchToIt(int frameIndex, int timeOut) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeOut));
+		wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(frameIndex));
+	}
+
+	public void waitForFrameAndSwitchToIt(WebElement frameElement, int timeOut) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeOut));
+		wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(frameElement));
+	}
+
+	/***** Wait For Window *****/
+	public boolean waitForWindow(int expectedNumberOfWindows, int timeOut) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeOut));
+
+		try {
+			return wait.until(ExpectedConditions.numberOfWindowsToBe(expectedNumberOfWindows));
+		} catch (Exception e) {
+			System.out.println("expectedNumberOfWindows are not correct");
+			return false;
+		}
 
 	}
 
