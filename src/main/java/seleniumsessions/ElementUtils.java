@@ -1,5 +1,6 @@
 package seleniumsessions;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +9,9 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class ElementUtils {
 
@@ -32,7 +35,8 @@ public class ElementUtils {
 	}
 
 	// Send Keys is CharacterSequence "Array" -> ... -> sending multiple values so
-	// what if user sends StringBuilder/Buffer/String as value so overloaded the above method
+	// what if user sends StringBuilder/Buffer/String as value so overloaded the
+	// above method
 	// Refer SendKeysConcept
 
 	public void doSendKeys(String locatorType, String locatorValue, String value) {
@@ -85,6 +89,10 @@ public class ElementUtils {
 
 	public WebElement getElement(By locator) {
 		return driver.findElement(locator);
+	}
+
+	public WebElement getElementWithWait(By locator, int timeOut) {
+		return waitForElementVisible(locator, timeOut);
 	}
 
 	// If Locators ar enot in By but in String
@@ -337,21 +345,17 @@ public class ElementUtils {
 		Thread.sleep(2000);
 		doClick(level4Menu);
 	}
-	
-	//For doSendKeysWithPause()/doActionsSendKeys()/doActionsClick()
-	//      -> Actions action = new Actions(driver)-> Created in Constructor above
-	
+
+	// For doSendKeysWithPause()/doActionsSendKeys()/doActionsClick()
+	// -> Actions action = new Actions(driver)-> Created in Constructor above
+
 	public void doSendKeysWithPause(By locator, String value, long pauseTime) {
-		
+
 		char val[] = value.toCharArray();
 		for (char ch : val) {// n->"n"
-			act
-			.sendKeys(getElement(locator), String.valueOf(ch))
-			  .pause(pauseTime)
-			    .perform();
+			act.sendKeys(getElement(locator), String.valueOf(ch)).pause(pauseTime).perform();
 		}
 	}
-
 
 	public void doActionsSendKeys(By locator, String value) {
 		act.sendKeys(getElement(locator), value).perform();
@@ -360,4 +364,45 @@ public class ElementUtils {
 	public void doActionsClick(By locator) {
 		act.click(getElement(locator)).perform();
 	}
+
+	/***** Wait Utils *****/
+
+	/**
+	 * An exception for checking that an element is present in the DOM of the
+	 * page.This does not mean that element is visible
+	 * 
+	 * @param locator
+	 * @param timeOut
+	 * @return
+	 */
+
+	public WebElement waitForElementPresence(By locator, int timeOut) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeOut));
+		return wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+	}
+
+	/**
+	 * An expectation for checking that an element is present on the DOM of a page
+	 * and visible.Visibility means that the element is not only displayed but also
+	 * has a height and width that is greater than 0
+	 * 
+	 * @param locator
+	 * @param timeOut
+	 * @return
+	 */
+
+	public WebElement waitForElementVisible(By locator, int timeOut) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeOut));
+		return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+	}
+
+	public void clickWithWait(By locator, int timeOut) {
+		waitForElementVisible(locator, timeOut).click();
+	}
+
+	public void sendKeysWithWait(By locator, int timeOut, CharSequence... value) {
+		waitForElementVisible(locator, timeOut).sendKeys(value);
+
+	}
+
 }
