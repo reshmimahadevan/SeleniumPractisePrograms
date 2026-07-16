@@ -16,6 +16,7 @@ public class ShadowDOMElement {
 		Thread.sleep(3000);
 
 		//shadowRoot ->open only we can automate not close
+		//document.querySelector -> CSS
 		
 		String script = "return document.querySelector(\"#userName\").shadowRoot.querySelector(\"#app2\").shadowRoot.querySelector(\"#pizza\")";
 

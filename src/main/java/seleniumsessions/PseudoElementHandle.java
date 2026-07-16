@@ -16,6 +16,7 @@ public class PseudoElementHandle {
 		// js.executeScript(script)Object (unlabeled box)
 		// js.executeScript(script).toString()String (labeled box)
 
+		//document.querySelector -> CSS
 		String script = "return window.getComputedStyle(document.querySelector(\"label[for='input-firstname']\"), '::before').getPropertyValue('content');";
 		String scriptColor = "return window.getComputedStyle(document.querySelector(\"label[for='input-firstname']\"), '::before').getPropertyValue('color');";
 
