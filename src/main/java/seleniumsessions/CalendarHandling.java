@@ -17,42 +17,40 @@ public class CalendarHandling {
 
 		driver.findElement(By.id("datepicker")).click();
 
-		futureDate("October 2027", "15");
+		futureDate("February 2028", "29");
 
 //		driver.findElement(By.linkText("25")).click();
 
 	}
 
 	/**
-	 * 
+	 *
 	 * @param expMonthYear
 	 * @param day
 	 */
 	public static void futureDate(String expMonthYear, String day) {
 
-		//Interger.parseInt -> since day is given in the form of string
-		if (expMonthYear.contains("February") && Integer.parseInt(day) > 29) {
-			System.out.println("wrong day is passed for February, please pass the day range between 1 to 29");
-			return;
-		}
+		// expMonthYear looks like "October 2027" -> split into month = "October", year= "2027"
+		String[] parts = expMonthYear.split(" ");
+		String expMonth = parts[0];
+		int expYear = Integer.parseInt(parts[1]);
+		int dayNum = Integer.parseInt(day); // Integer.parseInt -> since day is given in the form of string
 
-		if (Integer.parseInt(day) > 31) {
-			System.out.println("wrong day is passed, please pass the day range between 1 to 31");
-			return;
-		}
-
-		if (Integer.parseInt(day) <= 0) {
-			System.out.println("wrong day is passed, please pass the day range between 1 to 31");
+		if (!isValidDay(expMonth, expYear, dayNum)) {
+			System.out.println(
+					"wrong day is passed for " + expMonth + " " + expYear + ", please pass a valid day for that month");
 			return;
 		}
 
 		String actMonthYear = driver.findElement(By.className("ui-datepicker-title")).getText();
-		System.out.println(actMonthYear);// April 2025
+		System.out.println(actMonthYear);
 
-		while (!actMonthYear.equalsIgnoreCase(expMonthYear)) {// July 2025 == July 2025
+		while (!actMonthYear.equalsIgnoreCase(expMonthYear)) {
 			// click on next icon:
 			driver.findElement(By.xpath("//span[text()='Next']")).click();
-			actMonthYear = driver.findElement(By.className("ui-datepicker-title")).getText();// Pick all the dates until the futre date mentioned
+			actMonthYear = driver.findElement(By.className("ui-datepicker-title")).getText();// Pick all the dates until
+																								// the futre date
+																								// mentioned
 			System.out.println(actMonthYear);
 
 		}
@@ -61,30 +59,43 @@ public class CalendarHandling {
 
 	}
 
-//  If month and year are seperate	
-//	public static void futureDate(String expMonth, String expYear, String day) {
-//
-//	    if (expMonth.equalsIgnoreCase("February") && Integer.parseInt(day) > 29) {
-//	        System.out.println("wrong day for February");
-//	        return;
-//	    }
-//	    if (Integer.parseInt(day) > 31 || Integer.parseInt(day) <= 0) {
-//	        System.out.println("wrong day passed");
-//	        return;
-//	    }
-//
-//	    String actMonth = driver.findElement(By.className("month-label")).getText();
-//	    String actYear = driver.findElement(By.className("year-label")).getText();
-//	    System.out.println(actMonth + " " + actYear);
-//
-//	    while (!(actMonth.equalsIgnoreCase(expMonth) && actYear.equals(expYear))) {
-//	        driver.findElement(By.xpath("//span[text()='Next']")).click();
-//	        actMonth = driver.findElement(By.className("month-label")).getText();
-//	        actYear = driver.findElement(By.className("year-label")).getText();
-//	        System.out.println(actMonth + " " + actYear);
-//	    }
-//
-//	    driver.findElement(By.linkText(day)).click();
-//	}
+	/**
+	 * Checks whether "day" is a real day number for the given month/year, e.g.
+	 * rejects April 31, rejects Feb 30, allows Feb 29 only in leap years.
+	 */
+	public static boolean isValidDay(String month, int year, int day) {
+
+		int[] daysInMonth = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+		// Jan=index0, Feb=index1, Mar=index2 ... Dec=index11
+
+		String[] months = { "January", "February", "March", "April", "May", "June", "July", "August", "September",
+				"October", "November", "December" };
+
+		int monthIndex = -1;
+		for (int i = 0; i < months.length; i++) {
+			if (months[i].equalsIgnoreCase(month)) {
+				monthIndex = i;
+				break;
+			}
+		}
+
+		if (monthIndex == -1) {
+			System.out.println("unrecognized month name: " + month);
+			return false;
+		}
+
+		int maxDay = daysInMonth[monthIndex];
+
+		// handle leap year for February (monthIndex 1 = February)
+		if (monthIndex == 1 && isLeapYear(year)) {
+			maxDay = 29;
+		}
+
+		return day >= 1 && day <= maxDay;
+	}
+
+	public static boolean isLeapYear(int year) {
+		return year % 4 == 0;
+	}
 
 }
